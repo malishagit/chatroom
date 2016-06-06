@@ -1,0 +1,19 @@
+{
+  "name": "chatroom",
+  "version": "1.0.0",
+  "description": "this app is all about chatroom",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Malisha Christian",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "session": "^0.1.0",
+    "socket.io": "^1.4.5"
+  }
+}

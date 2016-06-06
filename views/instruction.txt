@@ -1,0 +1,60 @@
+1) have the nodejs server render views/index.ejs that has html content for the client whenever the clients requests "/".
+
+	rounting/index.js
+	app.get("/",function(req,res){
+		res.render('index',{pass whatever data we want});
+	});
+
+2)In the client codes,have a javascript code that asks the user for their name and store this user input in a variable called name.
+	<script>
+		var name = prompt('what is your name?');
+	</script>
+
+3)have the client EMIT "got_a_new_user" and pass "name" to the server.
+	<script>
+		var name = prompt('what is your name?');
+		io = io.connect();
+		io.emit('got_a_new_user',{name:name});
+	</script>
+
+4)have the server LISTEN for an event called "got_a_new_user" and when that event triggered, 4.1*) have the server broadcast an event called "new_user" to the clients with the name of the new user attached to this event.
+
+	app.io.route('got_a_new_user',function(req){
+		
+		app.io.broadcast('new_user',{new_user_name:req.data.name})
+	});
+4.2*) we store the name/sessionID of the new user in a varible/array/hash called users,
+
+	var users = {};
+
+4.3*)to the person who sent this request, we EMIT an event called 'existing_users' with all the users data.
+	
+	app.io.route('got_a_new_user',function(req){
+		
+		app.io.broadcast('new_user',{new_user_name:req.data.name})
+		req.io.emit('existing_users',users);
+	});
+
+5) have the clients LISTEN for an event called 'new_user' and when this event gets triggered, have the client render this information in jQuery somewhere in the HTML.
+
+	<script>
+		var name = prompt('what is your name?');
+		io = io.connect();
+		io.emit('got_a_new_user',{name:name});
+		io.on('new_user',function(data){
+		 //render this info in the html
+		})
+	</script>
+
+6)have the server LISTEN for an event called 'disconnect' and when this occures, BROADCAST to all the clients an event 'disconnect_user' with some data (name of the disconnected user)
+(note: we will probably need to pass sessionID or socket id or something)
+
+	app.io.route('disconnect',function(req){
+		app.io.broadcast('disconnect_user',{data:data})
+	})
+
+7)have the client LISTEN for the event 'disconnect_user' and when this gets triggered, have the client remove the proper jQuery box.
+
+io.on('disconnect_user',function(data){
+	//then in client remove the proper jQuery box.
+})
